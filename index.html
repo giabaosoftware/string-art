@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alien CNC String Art - Anti Hair-Trap Engine</title>
+    <title>Alien CNC String Art - AI Segmentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -43,10 +43,10 @@
             -webkit-appearance: none;
             width: 12px;
             height: 12px;
-            background: #10b981;
+            background: #a855f7;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
         }
         .settings-group {
             background: rgba(255,255,255,0.02);
@@ -58,7 +58,6 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0a0a0c; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
 <body class="p-2 md:p-6">
@@ -68,22 +67,19 @@
         <!-- SIDEBAR CONTROLS -->
         <div class="lg:col-span-4 space-y-4 control-panel p-5 rounded-xl">
             <div>
-                <h2 class="text-2xl font-bold tracking-tighter mb-1 uppercase text-emerald-400">CNC Studio v3</h2>
+                <h2 class="text-2xl font-bold tracking-tighter mb-1 uppercase text-purple-400">CNC Studio v5.1</h2>
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest flex justify-between">
-                    <span>Xử lý "Cạm bẫy tóc đen"</span>
-                    <span id="previewStatus" class="text-amber-400 animate-pulse hidden">Đang tải Mask...</span>
+                    <span>AI Engine (Fixed Bounce Bug)</span>
                 </p>
             </div>
 
             <div>
-                <input type="file" id="imageInput" accept="image/*" class="text-xs w-full file:bg-emerald-600 file:text-white file:border-0 file:px-3 file:py-2 file:rounded file:mr-3 file:cursor-pointer hover:file:bg-emerald-500 transition-all bg-gray-900 rounded-md">
+                <input type="file" id="imageInput" accept="image/*" class="text-xs w-full file:bg-purple-600 file:text-white file:border-0 file:px-3 file:py-2 file:rounded file:mr-3 file:cursor-pointer hover:file:bg-purple-500 transition-all bg-gray-900 rounded-md">
             </div>
 
             <!-- NHÓM 1: CẮT CÚP -->
             <div class="settings-group space-y-3">
-                <div class="text-[10px] uppercase tracking-widest text-emerald-500 font-bold mb-1 flex justify-between">
-                    <span>1. Căn Chỉnh Khung Hình</span>
-                </div>
+                <div class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">1. Căn Chỉnh Khung Hình</div>
                 <div>
                     <div class="flex justify-between mb-1">
                         <label class="text-[10px] uppercase tracking-widest text-gray-300">Phóng to (Zoom)</label>
@@ -109,44 +105,31 @@
                 </div>
             </div>
 
-            <!-- NHÓM 2: CỨU CHI TIẾT (EXPOSURE & MASK) -->
-            <div class="settings-group space-y-3">
-                <div class="text-[10px] uppercase tracking-widest text-amber-400 font-bold mb-1 flex justify-between">
-                    <span>2. Ép Trọng Lượng Ảnh (Preview)</span>
+            <!-- NHÓM 2: AI PHÂN TÁCH -->
+            <div class="settings-group space-y-3 border-purple-500/30 bg-purple-900/10">
+                <div class="text-[10px] uppercase tracking-widest text-purple-400 font-bold mb-1 flex justify-between">
+                    <span>2. AI Nhận Diện Khuôn Mặt</span>
                 </div>
                 
-                <div>
-                    <div class="flex justify-between mb-1">
-                        <label class="text-[10px] uppercase tracking-widest text-gray-300">Tương phản (Contrast)</label>
-                        <span id="contrastVal" class="text-xs font-mono text-white">1.2</span>
-                    </div>
-                    <input type="range" id="contrast" min="0.5" max="3.0" step="0.1" value="1.2" class="w-full">
-                </div>
+                <button id="runAiBtn" disabled class="w-full bg-purple-600 text-white py-2 rounded-lg font-bold text-xs uppercase hover:bg-purple-500 transition-all disabled:opacity-30">
+                    Phân tích AI (Ngũ Quan)
+                </button>
+                <p id="aiStatus" class="text-[10px] text-center text-gray-400">Tải ảnh lên và ấn nút để chạy AI.</p>
 
-                <div>
+                <div class="pt-2">
                     <div class="flex justify-between mb-1">
-                        <label class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">Mặt nạ tẩy tóc viền (Hair Fade)</label>
-                        <span id="hairMaskVal" class="text-xs font-mono text-white">0.6</span>
+                        <label class="text-[10px] uppercase tracking-widest text-purple-300 font-bold">Tỉ lệ dệt (Ngũ Quan / Tóc)</label>
+                        <span id="faceRatioVal" class="text-xs font-mono text-white">75%</span>
                     </div>
-                    <input type="range" id="hairMask" min="0.0" max="1.0" step="0.1" value="0.6" class="w-full accent-amber-500">
-                    <p class="text-[9px] text-gray-400">Ép xóa tóc ở rìa để chừa đinh dệt mặt (Càng nhỏ càng xóa mạnh).</p>
+                    <input type="range" id="faceRatio" min="50" max="95" step="5" value="75" class="w-full accent-purple-500">
+                    <p class="text-[9px] text-gray-400">75% số bước dệt đầu tiên sẽ chỉ dùng để khắc nét ngũ quan.</p>
                 </div>
             </div>
 
-            <!-- NHÓM 3: MÁY CNC & THUẬT TOÁN -->
+            <!-- NHÓM 3: MÁY CNC -->
             <div class="settings-group space-y-3">
-                <div class="text-[10px] uppercase tracking-widest text-blue-400 font-bold mb-1">3. Thuật Toán Máy CNC</div>
-                
-                <div>
-                    <div class="flex justify-between mb-1">
-                        <label class="text-[10px] uppercase tracking-widest text-blue-300 font-bold">Ưu tiên Mắt/Mũi (Exponential Focus)</label>
-                        <span id="detailPriorityVal" class="text-xs font-mono text-white">1.5</span>
-                    </div>
-                    <input type="range" id="detailPriority" min="1.0" max="3.0" step="0.1" value="1.5" class="w-full accent-blue-500">
-                    <p class="text-[9px] text-gray-400">Tăng > 1.5 để máy dệt ép đường viền nhỏ li ti, mặc kệ mảng tối lớn.</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 pt-2">
+                <div class="text-[10px] uppercase tracking-widest text-blue-400 font-bold mb-1">3. Cấu Hình Máy Dệt</div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <div class="flex justify-between mb-1">
                             <label class="text-[10px] uppercase tracking-widest text-gray-300">Đinh (Pegs)</label>
@@ -156,7 +139,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between mb-1">
-                            <label class="text-[10px] uppercase tracking-widest text-gray-300">Sợi chỉ đậm</label>
+                            <label class="text-[10px] uppercase tracking-widest text-gray-300">Độ đậm chỉ</label>
                             <span id="threadWeightVal" class="text-xs font-mono text-white">10</span>
                         </div>
                         <input type="range" id="threadWeight" min="5" max="40" step="1" value="10" class="w-full">
@@ -168,18 +151,18 @@
                         <label class="text-[10px] uppercase tracking-widest text-gray-300">Số bước dệt (Lines)</label>
                         <span id="lineCountVal" class="text-xs font-mono text-white">4000</span>
                     </div>
-                    <input type="range" id="lineCount" min="1000" max="8000" step="100" value="4000" class="w-full">
+                    <input type="range" id="lineCount" min="1000" max="10000" step="100" value="4000" class="w-full">
                 </div>
             </div>
 
             <div class="pt-2 space-y-2">
-                <button id="processBtn" disabled class="w-full bg-emerald-600 text-white py-4 rounded-lg font-bold text-xs uppercase hover:bg-emerald-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-emerald-900/50">
+                <button id="processBtn" disabled class="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-xs uppercase hover:bg-blue-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-blue-900/50">
                     Bắt đầu dệt CNC
                 </button>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <button id="downloadJsonBtn" disabled class="w-full border border-emerald-700/50 text-emerald-400 py-3 rounded-lg font-bold text-[10px] uppercase hover:bg-emerald-900/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                        Lưu JSON (Máy CNC)
+                    <button id="downloadJsonBtn" disabled class="w-full border border-blue-700/50 text-blue-400 py-3 rounded-lg font-bold text-[10px] uppercase hover:bg-blue-900/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                        Lưu JSON (CNC)
                     </button>
                     <button id="downloadImageBtn" disabled class="w-full border border-gray-700 text-gray-300 py-3 rounded-lg font-bold text-[10px] uppercase hover:bg-gray-800 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         Lưu Bản Vẽ
@@ -189,12 +172,12 @@
 
             <!-- Progress -->
             <div id="progressContainer" class="hidden space-y-2 pt-2">
-                <div class="flex justify-between text-[10px] uppercase tracking-widest text-emerald-400">
+                <div class="flex justify-between text-[10px] uppercase tracking-widest text-blue-400">
                     <span id="statusLabel">Đang tính toán mã...</span>
                     <span id="progressText">0 / 4000</span>
                 </div>
                 <div class="w-full bg-gray-900 h-1 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-emerald-500 h-full w-0 transition-all duration-75"></div>
+                    <div id="progressBar" class="bg-blue-500 h-full w-0 transition-all duration-75"></div>
                 </div>
             </div>
         </div>
@@ -205,7 +188,7 @@
                 <canvas id="mainCanvas" width="1000" height="1000" class="w-full h-auto max-w-[800px]"></canvas>
             </div>
             <div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-[0.2em] px-4">
-                <span id="resDisplay">Bản xem trước Mật độ điểm ảnh (Error Map)</span>
+                <span id="resDisplay">Bản xem trước hình ảnh</span>
                 <span id="sequenceDisplay">Sequence: [ ]</span>
             </div>
         </div>
@@ -215,25 +198,27 @@
     <script>
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        // UI Elements
         const imageInput = document.getElementById('imageInput');
+        const runAiBtn = document.getElementById('runAiBtn');
+        const aiStatus = document.getElementById('aiStatus');
         const processBtn = document.getElementById('processBtn');
         const downloadJsonBtn = document.getElementById('downloadJsonBtn');
         const downloadImageBtn = document.getElementById('downloadImageBtn');
+        
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
         const progressText = document.getElementById('progressText');
-        const sequenceDisplay = document.getElementById('sequenceDisplay');
         const statusLabel = document.getElementById('statusLabel');
-        const previewStatus = document.getElementById('previewStatus');
         const resDisplay = document.getElementById('resDisplay');
+        const sequenceDisplay = document.getElementById('sequenceDisplay');
 
         // Inputs
         const zoomInput = document.getElementById('zoom');
         const panXInput = document.getElementById('panX');
         const panYInput = document.getElementById('panY');
-        const contrastInput = document.getElementById('contrast');
-        const hairMaskInput = document.getElementById('hairMask');
-        const detailPriorityInput = document.getElementById('detailPriority');
+        const faceRatioInput = document.getElementById('faceRatio');
         const pegCountInput = document.getElementById('pegCount');
         const lineCountInput = document.getElementById('lineCount');
         const threadWeightInput = document.getElementById('threadWeight');
@@ -242,17 +227,26 @@
         let isProcessing = false;
         let generatedSequence = []; 
         let finalPegCount = 0;
-        let currentErrorMap = null; 
+        let baseErrorMap = null; 
+        
+        // AI State
+        let isAiProcessed = false;
+        let aiFaceMaskData = null; 
 
         const C_SIZE = 1000; 
 
         const bindSlider = (input, labelId) => {
             input.addEventListener('input', () => {
-                document.getElementById(labelId).innerText = input.value;
+                document.getElementById(labelId).innerText = input.value + (input.id === 'faceRatio' ? '%' : '');
                 if(originalImg && !isProcessing) {
-                    clearTimeout(window.previewTimeout);
-                    previewStatus.classList.remove('hidden');
-                    window.previewTimeout = setTimeout(generatePreviewMask, 50);
+                    if (['zoom', 'panX', 'panY'].includes(input.id)) {
+                        isAiProcessed = false;
+                        aiFaceMaskData = null;
+                        aiStatus.innerText = "Căn chỉnh thay đổi, cần chạy lại AI.";
+                        runAiBtn.classList.remove('bg-gray-600');
+                        runAiBtn.classList.add('bg-purple-600');
+                        drawPreview();
+                    }
                 }
             });
         };
@@ -260,9 +254,7 @@
         bindSlider(zoomInput, 'zoomVal');
         bindSlider(panXInput, 'panXVal');
         bindSlider(panYInput, 'panYVal');
-        bindSlider(contrastInput, 'contrastVal');
-        bindSlider(hairMaskInput, 'hairMaskVal');
-        bindSlider(detailPriorityInput, 'detailPriorityVal');
+        bindSlider(faceRatioInput, 'faceRatioVal');
         bindSlider(pegCountInput, 'pegCountVal');
         bindSlider(lineCountInput, 'lineCountVal');
         bindSlider(threadWeightInput, 'threadWeightVal');
@@ -275,28 +267,31 @@
                 const img = new Image();
                 img.onload = () => {
                     originalImg = img;
+                    runAiBtn.disabled = false;
                     processBtn.disabled = false;
+                    
                     zoomInput.value = 1.0; document.getElementById('zoomVal').innerText = "1.0";
                     panXInput.value = 0; document.getElementById('panXVal').innerText = "0";
                     panYInput.value = 0; document.getElementById('panYVal').innerText = "0";
-                    generatePreviewMask();
+                    
+                    isAiProcessed = false;
+                    aiFaceMaskData = null;
+                    aiStatus.innerText = "Sẵn sàng phân tích AI.";
+                    runAiBtn.classList.add('bg-purple-600');
+                    
+                    drawPreview();
                 };
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         });
 
-        // 1. TẠO MẶT NẠ TIỀN XỬ LÝ (PREVIEW MASK)
-        function generatePreviewMask() {
+        function drawPreview() {
             if(!originalImg) return;
-            resDisplay.innerText = "Chế độ: Xem trước Bản đồ đói mực (Càng đen càng ăn nhiều chỉ)";
-
+            
             const zoom = parseFloat(zoomInput.value);
             const panX = parseInt(panXInput.value);
             const panY = parseInt(panYInput.value);
-            const contrast = parseFloat(contrastInput.value);
-            const hairMaskThreshold = parseFloat(hairMaskInput.value);
-
             const cx = C_SIZE / 2;
             const cy = C_SIZE / 2;
             const radius = C_SIZE / 2 - 15;
@@ -323,70 +318,156 @@
             const imgDataObj = offCtx.getImageData(0, 0, C_SIZE, C_SIZE);
             const data = imgDataObj.data;
             
-            currentErrorMap = new Float32Array(C_SIZE * C_SIZE);
+            baseErrorMap = new Float32Array(C_SIZE * C_SIZE);
             
             for(let i=0; i < data.length; i+=4) {
-                let r = data[i];
-                let g = data[i+1];
-                let b = data[i+2];
-
-                // Contrast
-                r = ((r / 255 - 0.5) * contrast + 0.5) * 255;
-                g = ((g / 255 - 0.5) * contrast + 0.5) * 255;
-                b = ((b / 255 - 0.5) * contrast + 0.5) * 255;
-
-                r = Math.max(0, Math.min(255, r));
-                g = Math.max(0, Math.min(255, g));
-                b = Math.max(0, Math.min(255, b));
-
-                // Grayscale Luma
-                let luma = (r * 0.299 + g * 0.587 + b * 0.114) / 255.0; 
+                let r = data[i], g = data[i+1], b = data[i+2];
+                let grayscale = 255 - (r * 0.299 + g * 0.587 + b * 0.114);
                 
-                // Base error (255 is completely black/hungry)
-                let errorVal = (1.0 - luma) * 255;
-                
-                // Mask vòng tròn và Hair Vignette Mask
                 const px = (i/4) % C_SIZE;
                 const py = Math.floor((i/4) / C_SIZE);
                 const dist = Math.sqrt((px - cx)**2 + (py - cy)**2);
-                
-                if(dist > radius) {
-                    errorVal = 0; 
-                } else {
-                    // Thuật toán tẩy tóc viền ngoài
-                    // Tính từ tâm (0) ra viền (1)
-                    let distRatio = dist / radius;
-                    if (distRatio > hairMaskThreshold) {
-                        // Làm mờ dần từ ngưỡng hairMaskThreshold ra tới viền
-                        let fade = 1.0 - ((distRatio - hairMaskThreshold) / (1.0 - hairMaskThreshold));
-                        errorVal *= fade;
-                    }
-                }
+                if(dist > radius) grayscale = 0; 
 
-                currentErrorMap[i/4] = errorVal;
-
-                // Render preview
-                let displayColor = 255 - errorVal;
-                data[i] = displayColor;
-                data[i+1] = displayColor;
-                data[i+2] = displayColor;
-                data[i+3] = 255;
+                baseErrorMap[i/4] = grayscale;
             }
 
             ctx.putImageData(imgDataObj, 0, 0);
+
+            if (isAiProcessed && aiFaceMaskData) {
+                resDisplay.innerText = "Vùng sáng là Ngũ Quan. Vùng xám mờ là Tóc/Áo.";
+                const overlayData = ctx.getImageData(0, 0, C_SIZE, C_SIZE);
+                for(let i=0; i < aiFaceMaskData.length; i++) {
+                    if (aiFaceMaskData[i] === 0) {
+                        overlayData.data[i*4] = Math.min(255, overlayData.data[i*4] + 80); 
+                        overlayData.data[i*4+1] = Math.min(255, overlayData.data[i*4+1] + 80); 
+                        overlayData.data[i*4+2] = Math.max(0, overlayData.data[i*4+2] - 50); 
+                    } else {
+                        overlayData.data[i*4] = Math.min(255, overlayData.data[i*4] + 30);
+                        overlayData.data[i*4+2] = Math.min(255, overlayData.data[i*4+2] + 40);
+                    }
+                }
+                ctx.putImageData(overlayData, 0, 0);
+            } else {
+                resDisplay.innerText = "Bản xem trước hình ảnh.";
+            }
             
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI*2);
-            ctx.strokeStyle = '#10b981'; // Xanh lá
+            ctx.strokeStyle = '#ccc'; 
             ctx.lineWidth = 1;
             ctx.stroke();
-
-            previewStatus.classList.add('hidden');
         }
 
-        // 2. THUẬT TOÁN DỆT (EXPONENTIAL GREEDY)
+        runAiBtn.addEventListener('click', async () => {
+            if (!originalImg) return;
+            runAiBtn.disabled = true;
+            aiStatus.innerText = "Đang tải thư viện Google MediaPipe (Khoảng 5MB)...";
+
+            try {
+                if (!window.FaceMesh) {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js";
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
+
+                aiStatus.innerText = "Đang quét các điểm mốc sinh học...";
+                
+                const zoom = parseFloat(zoomInput.value);
+                const panX = parseInt(panXInput.value);
+                const panY = parseInt(panYInput.value);
+                
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = C_SIZE;
+                tempCanvas.height = C_SIZE;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                tempCtx.fillStyle = '#ffffff';
+                tempCtx.fillRect(0, 0, C_SIZE, C_SIZE);
+                
+                const minDim = Math.min(originalImg.width, originalImg.height);
+                tempCtx.save();
+                tempCtx.translate(C_SIZE/2 + panX, C_SIZE/2 + panY);
+                tempCtx.scale(zoom, zoom);
+                tempCtx.translate(-C_SIZE/2, -C_SIZE/2);
+                tempCtx.drawImage(originalImg, (originalImg.width - minDim)/2, (originalImg.height - minDim)/2, minDim, minDim, 0, 0, C_SIZE, C_SIZE);
+                tempCtx.restore();
+
+                const faceMesh = new window.FaceMesh({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`});
+                faceMesh.setOptions({
+                    maxNumFaces: 1,
+                    refineLandmarks: false,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                faceMesh.onResults((results) => {
+                    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                        const landmarks = results.multiFaceLandmarks[0];
+                        
+                        let minX = 1, maxX = 0, minY = 1, maxY = 0;
+                        for (let pt of landmarks) {
+                            if (pt.x < minX) minX = pt.x;
+                            if (pt.x > maxX) maxX = pt.x;
+                            if (pt.y < minY) minY = pt.y;
+                            if (pt.y > maxY) maxY = pt.y;
+                        }
+                        
+                        const fCx = (minX + maxX) / 2 * C_SIZE;
+                        const fCy = (minY + maxY) / 2 * C_SIZE;
+                        const rX = ((maxX - minX) / 2 * C_SIZE) * 1.15;
+                        const rY = ((maxY - minY) / 2 * C_SIZE) * 1.25;
+
+                        const maskCanvas = document.createElement('canvas');
+                        maskCanvas.width = C_SIZE;
+                        maskCanvas.height = C_SIZE;
+                        const maskCtx = maskCanvas.getContext('2d');
+                        maskCtx.fillStyle = '#000000'; 
+                        maskCtx.fillRect(0, 0, C_SIZE, C_SIZE);
+                        
+                        maskCtx.fillStyle = '#FFFFFF'; 
+                        maskCtx.beginPath();
+                        maskCtx.ellipse(fCx, fCy, rX, rY, 0, 0, 2 * Math.PI);
+                        maskCtx.fill();
+
+                        const maskImgData = maskCtx.getImageData(0, 0, C_SIZE, C_SIZE).data;
+                        aiFaceMaskData = new Float32Array(C_SIZE * C_SIZE);
+                        for (let i = 0; i < maskImgData.length; i+=4) {
+                            aiFaceMaskData[i/4] = maskImgData[i] > 128 ? 1.0 : 0.0;
+                        }
+                        
+                        isAiProcessed = true;
+                        aiStatus.innerHTML = "<span class='text-green-400'>✔ AI đã cắt thành công Ngũ quan & Tóc.</span>";
+                        runAiBtn.classList.remove('bg-purple-600');
+                        runAiBtn.classList.add('bg-gray-600');
+                        
+                        drawPreview();
+                    } else {
+                        aiStatus.innerHTML = "<span class='text-red-400'>✖ Không tìm thấy mặt! Hãy chỉnh lại Zoom.</span>";
+                        isAiProcessed = false;
+                    }
+                    runAiBtn.disabled = false;
+                    faceMesh.close();
+                });
+
+                await faceMesh.send({image: tempCanvas});
+
+            } catch (err) {
+                console.error(err);
+                aiStatus.innerText = "Lỗi khi tải AI. Vui lòng kiểm tra mạng.";
+                runAiBtn.disabled = false;
+            }
+        });
+
+        // ==========================================
+        // 2. THUẬT TOÁN DỆT (ĐÃ FIX LỖI INFINITE BOUNCE)
+        // ==========================================
         processBtn.addEventListener('click', () => {
-            if (!currentErrorMap || isProcessing) return;
+            if (!baseErrorMap || isProcessing) return;
             startWeaving();
         });
 
@@ -396,21 +477,22 @@
             downloadJsonBtn.disabled = true;
             downloadImageBtn.disabled = true;
             progressContainer.classList.remove('hidden');
-            resDisplay.innerText = "Bản vẽ thiết kế CNC - Exponential Routing";
-            statusLabel.innerText = "Đang chạy toán học lũy thừa...";
+            
             generatedSequence = [];
 
             const numPegs = parseInt(pegCountInput.value);
             finalPegCount = numPegs;
             const numLines = parseInt(lineCountInput.value);
             const threadWeight = parseInt(threadWeightInput.value);
-            const detailPriority = parseFloat(detailPriorityInput.value); // KHÓA GIẢI MÃ
+            
+            const faceRatio = parseInt(faceRatioInput.value) / 100.0;
+            const faceLinesCount = Math.floor(numLines * faceRatio); 
             
             const radius = C_SIZE / 2 - 15;
             const cx = C_SIZE / 2;
             const cy = C_SIZE / 2;
 
-            const errorMap = new Float32Array(currentErrorMap);
+            const errorMap = new Float32Array(baseErrorMap);
 
             const pegs = [];
             for (let i = 0; i < numPegs; i++) {
@@ -464,7 +546,15 @@
                     let maxScore = -1;
                     let bestPixels = [];
 
+                    const isPhase1 = isAiProcessed ? (lineStep < faceLinesCount) : false;
+                    
+                    // Lấy ra đinh ở bước trước đó để chặn U-Turn
+                    const prevPeg = generatedSequence.length > 1 ? generatedSequence[generatedSequence.length - 2] : -1;
+
                     for (let i = 0; i < numPegs; i++) {
+                        // BẢO VỆ 1: Cấm quay đầu lại ngay lập tức (Chống Bounce)
+                        if (i === prevPeg) continue;
+                        
                         const dist = Math.abs(i - currentPeg);
                         const wrapDist = Math.min(dist, numPegs - dist);
                         if (wrapDist < Math.floor(numPegs / 10)) continue; 
@@ -475,13 +565,24 @@
                         
                         let score = 0;
                         for(let p of pixels) {
-                            // THUẬT TOÁN EXPONENTIAL FOCUS: 
-                            // Thay vì cộng thẳng errorMap[p], ta nâng lên lũy thừa.
-                            // Điều này khiến 1 điểm siêu đen (mắt = 255) đè bẹp 100 điểm xám (tóc mờ = 50)
-                            score += Math.pow(errorMap[p], detailPriority);
+                            if (isAiProcessed && aiFaceMaskData) {
+                                const isFacePixel = aiFaceMaskData[p] === 1.0;
+                                if (isPhase1 && isFacePixel) {
+                                    score += errorMap[p];
+                                } else if (!isPhase1 && !isFacePixel) {
+                                    score += errorMap[p];
+                                }
+                            } else {
+                                score += errorMap[p];
+                            }
                         }
-                        // Lấy trung bình điểm trên độ dài để tìm đường tối đặc nhất
+                        
+                        // Lấy trung bình điểm
                         score = score / pixels.length; 
+                        
+                        // BẢO VỆ 2: Thêm Nhiễu Vi Mô (Micro Noise Tie-Breaker)
+                        // Giúp máy rải đều chỉ ngẫu nhiên khi ảnh đã cạn mực (score = 0)
+                        score += Math.random() * 0.0001;
 
                         if (score > maxScore) {
                             maxScore = score;
@@ -491,10 +592,19 @@
                     }
 
                     if (bestPeg !== -1) {
+                        const isPhase1 = isAiProcessed ? (lineStep < faceLinesCount) : false;
+                        
                         for(let p of bestPixels) {
-                            // Trừ mực đi để máy nhường chỗ dệt cho các phần khác
-                            errorMap[p] -= (threadWeight * 2); // Trừ mạnh hơn xíu để nhanh phân tán
-                            if(errorMap[p] < 0) errorMap[p] = 0;
+                            if (isAiProcessed && aiFaceMaskData) {
+                                const isFacePixel = aiFaceMaskData[p] === 1.0;
+                                if ((isPhase1 && isFacePixel) || (!isPhase1 && !isFacePixel)) {
+                                    errorMap[p] -= threadWeight;
+                                    if(errorMap[p] < 0) errorMap[p] = 0;
+                                }
+                            } else {
+                                errorMap[p] -= threadWeight;
+                                if(errorMap[p] < 0) errorMap[p] = 0;
+                            }
                         }
 
                         ctx.beginPath();
@@ -514,6 +624,19 @@
 
                 progressBar.style.width = `${(lineStep / numLines) * 100}%`;
                 progressText.innerText = `${lineStep} / ${numLines}`;
+                
+                if (isAiProcessed) {
+                    if (lineStep < faceLinesCount) {
+                        statusLabel.innerText = `GIAI ĐOẠN 1: Đang dệt Ngũ Quan (${lineStep}/${faceLinesCount})...`;
+                        statusLabel.className = "text-purple-400 font-bold";
+                        progressBar.className = "bg-purple-500 h-full transition-all duration-75";
+                    } else {
+                        statusLabel.innerText = `GIAI ĐOẠN 2: Đang hoàn thiện Tóc & Áo (${lineStep}/${numLines})...`;
+                        statusLabel.className = "text-blue-400 font-bold";
+                        progressBar.className = "bg-blue-500 h-full transition-all duration-75";
+                    }
+                }
+
                 sequenceDisplay.innerText = `Sequence: [${generatedSequence.slice(0, 5).join(', ')} ... ${generatedSequence[generatedSequence.length-1]}]`;
 
                 if (lineStep < numLines) {
@@ -531,14 +654,15 @@
             processBtn.disabled = false;
             downloadJsonBtn.disabled = false;
             downloadImageBtn.disabled = false;
-            statusLabel.innerText = "Hoàn tất giải thuật!";
-            setTimeout(() => progressContainer.classList.add('hidden'), 3000);
+            statusLabel.innerText = "Hoàn tất dệt AI 2 Giai đoạn!";
+            statusLabel.className = "text-green-400 font-bold";
+            setTimeout(() => progressContainer.classList.add('hidden'), 5000);
         }
 
         downloadJsonBtn.addEventListener('click', () => {
             const data = {
                 type: "Alien_String_Art_CNC_File",
-                author: "Generative Math Engine v3",
+                author: "AI 2-Phase Engine v5.1",
                 parameters: { total_pegs: finalPegCount, total_lines: generatedSequence.length - 1 },
                 steps_array: generatedSequence
             };
@@ -547,7 +671,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `jisoo_cnc_${finalPegCount}pegs_${Date.now()}.json`;
+            link.download = `ai_face_cnc_${finalPegCount}pegs_${Date.now()}.json`;
             link.click();
             URL.revokeObjectURL(url);
         });
@@ -556,7 +680,7 @@
             canvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.download = `string_art_preview_${Date.now()}.png`;
+                link.download = `ai_string_art_${Date.now()}.png`;
                 link.href = url;
                 link.click();
                 URL.revokeObjectURL(url);
